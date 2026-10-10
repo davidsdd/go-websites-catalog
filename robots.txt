@@ -1,4 +1,2 @@
-# Search indexing is disabled by the robots meta tag in index.html.
-# Allow crawling so search engines can read that noindex directive.
 User-agent: *
-Allow: /
+Disallow: /
