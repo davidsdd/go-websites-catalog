@@ -1,0 +1,206 @@
+/* 字体随文件附带，离线打开网页时也能保持相同的排版。 */
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("./fonts/cormorant-garamond-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: block;
+}
+
+/* 浅色主题：暖象牙白与古金色。 */
+:root {
+  --background: #f8f5ef;
+  --ink: #493d2e;
+  --hover-ink: #795c2e;
+  --gold: #927544;
+  --gem-highlight: #f0dfbf;
+  --gem-shadow: #aa9270;
+  --gem-glow: rgba(146, 117, 68, 0.04);
+  --line: rgba(146, 117, 68, 0.25);
+  --glow: rgba(229, 212, 179, 0.2);
+  --hover-background: rgba(146, 117, 68, 0.035);
+  --selection: #e4d9c3;
+}
+
+/* 自动适应用户系统的深色模式，无切换开关。 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #151210;
+    --ink: #efe5d5;
+    --hover-ink: #f2dfba;
+    --gold: #bda17a;
+    --gem-highlight: #fff3db;
+    --gem-shadow: #aa987e;
+    --gem-glow: rgba(235, 216, 182, 0.06);
+    --line: rgba(189, 161, 122, 0.24);
+    --glow: rgba(113, 83, 49, 0.14);
+    --hover-background: rgba(189, 161, 122, 0.04);
+    --selection: #514332;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { color-scheme: light dark; }
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--background);
+  color: var(--ink);
+  font-family: var(--font-cormorant, "Cormorant Garamond", Georgia, serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--selection); color: var(--ink); }
+
+.page {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  height: 100svh;
+  padding: 0 clamp(28px, 9vw, 144px);
+  background:
+    radial-gradient(ellipse at 50% 12%, var(--glow), transparent 62%),
+    var(--background);
+}
+
+.directory-shell {
+  --header-space: clamp(46px, 11svh, 104px);
+  --header-gap: clamp(12px, 2svh, 20px);
+  --balance-offset: clamp(0px, 3svh, 28px);
+  display: flex;
+  flex-direction: column;
+  width: 92%;
+  max-width: 860px;
+  height: 100%;
+}
+
+/* 上下弹性留白保持菜单原来的位置，宝石居中于菜单上方的完整区域。 */
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 0 calc(var(--header-space) + var(--header-gap) - var(--balance-offset));
+  min-height: 0;
+}
+
+.directory { flex: 0 0 auto; }
+.directory-shell::after { content: ""; flex: 1 0 0; }
+
+.emblem {
+  display: block;
+  flex-shrink: 0;
+  width: clamp(52px, 14svh, 136px);
+  height: clamp(52px, 14svh, 136px);
+  /* 只微调宝石的位置，不影响菜单的布局。 */
+  transform: translateY(clamp(4px, 1svh, 8px));
+  color: var(--gold);
+  filter: drop-shadow(0 3px 13px var(--gem-glow));
+}
+
+.service-list { margin: 0; padding: 0; list-style: none; }
+.service-list li { border-top: 1px solid var(--line); }
+.service-list li:last-child { border-bottom: 1px solid var(--line); }
+
+/* 整行都可点击；名称顺序完全由 HTML 中 li 的顺序决定。 */
+.service {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 25px;
+  align-items: center;
+  gap: 32px;
+  min-height: clamp(38px, 8.4svh, 80px);
+  padding: clamp(7px, 1.8svh, 18px) 8px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.service-name {
+  font-size: clamp(21px, min(2.65vw, 4.6svh), 38px);
+  font-weight: 400;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+/* CSS 绘制的小箭头不引入额外文字或字体依赖。 */
+.service-arrow {
+  position: relative;
+  display: block;
+  width: 25px;
+  height: 16px;
+  color: var(--gold);
+  transition: transform 180ms ease;
+}
+
+.service-arrow::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 0;
+  width: 24px;
+  height: 1px;
+  background: currentColor;
+}
+
+.service-arrow::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 1px;
+  width: 9px;
+  height: 9px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.service:hover,
+.service:focus-visible {
+  color: var(--hover-ink);
+  background: var(--hover-background);
+}
+
+.service:hover .service-arrow,
+.service:focus-visible .service-arrow { transform: translateX(4px); }
+
+.service:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+}
+
+@media (max-width: 900px) {
+  .page { padding-inline: 64px; }
+  .directory-shell { width: 100%; }
+  .service { min-height: clamp(38px, 8.4svh, 80px); gap: 24px; }
+  .service-name { font-size: clamp(22px, min(4.2vw, 4.5svh), 36px); }
+}
+
+@media (max-width: 600px) {
+  .page { padding-inline: 24px; }
+  .directory-shell { --header-space: clamp(46px, 12svh, 96px); }
+  .emblem { width: clamp(52px, 14svh, 124px); height: clamp(52px, 14svh, 124px); }
+  .service { min-height: clamp(38px, 9.3svh, 86px); padding: clamp(6px, 1.4svh, 13px) 3px; gap: 18px; grid-template-columns: minmax(0, 1fr) 20px; }
+  .service-name { font-size: clamp(18px, min(7.1vw, 3.8svh), 29px); line-height: 1.24; }
+  .service-arrow { width: 20px; }
+  .service-arrow::before { width: 19px; }
+  .service-arrow::after { width: 8px; height: 8px; top: 3.5px; }
+  .service:hover .service-arrow,
+  .service:focus-visible .service-arrow { transform: translateX(2px); }
+}
+
+@media (max-height: 420px) and (max-width: 600px) {
+  .directory-shell { --header-space: 32px; --header-gap: 8px; }
+  .emblem { width: 40px; height: 40px; }
+  .service { min-height: 32px; padding-block: 4px; }
+  .service-name { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service, .service-arrow { transition: none; }
+}

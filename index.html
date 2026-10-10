@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f8f5ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#151210" media="(prefers-color-scheme: dark)">
+  <title>Service Directory</title>
+  <!-- 提前读取本地字体；无需联网。 -->
+  <link rel="preload" href="./fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/signature.svg" as="image">
+  <!-- 首屏背景直接适配主题，样式加载期间也保持相同底色。 -->
+  <style>
+    html { color-scheme: light dark; background: #f8f5ef; }
+    @media (prefers-color-scheme: dark) { html { background: #151210; } }
+    html.startup-pending .page > * { opacity: 0 !important; }
+    html.startup-fallback {
+      --font-cormorant: Georgia, serif;
+      --font-dm-sans: Arial, sans-serif;
+      --font-grotesk: Arial, sans-serif;
+      --font-mono: monospace;
+    }
+  </style>
+  <!-- 字体和本地图标准备好后一起显示，避免默认字体切换及图标迟到。 -->
+  <script>
+    (() => {
+      if (!document.fonts) return;
+      const root = document.documentElement;
+      root.classList.add("startup-pending");
+      const reveal = () => root.classList.remove("startup-pending");
+      // 文件缺失或加载异常时仍能显示内容，不会一直隐藏页面。
+      const limit = setTimeout(() => {
+        // 超时后保持回退字体，避免迟到的字体再次改变已显示的排版。
+        root.classList.add("startup-fallback");
+        reveal();
+      }, 3000);
+      window.addEventListener("DOMContentLoaded", () => {
+        const fonts = Array.from(document.fonts, font => font.load());
+        const images = Array.from(document.images, image =>
+          typeof image.decode === "function" ? image.decode() : Promise.resolve()
+        );
+        Promise.allSettled([...fonts, ...images])
+          .then(() => document.fonts.ready)
+          .then(() => { clearTimeout(limit); reveal(); }, reveal);
+      }, { once: true });
+    })();
+  </script>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="icon" href="./assets/signature.svg" type="image/svg+xml">
+  <script src="./logo.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <div class="directory-shell">
+      <!-- 整颗切面宝石由本地脚本绘制；名称与链接可在下面直接修改。 -->
+      <div class="masthead" aria-hidden="true">
+        <svg class="emblem" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g class="emblem-still">
+            <image href="./assets/signature.svg" width="120" height="120"/>
+          </g>
+          <g class="emblem-crystal" visibility="hidden">
+            <g class="crystal-body"></g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- 修改文字即可更改名称；修改 href 即可更改链接。每个 li 是一项。 -->
+      <nav class="directory" aria-label="Services">
+        <ul class="service-list">
+          <li>
+            <a class="service" href="https://n.gov.songming.org/">
+              <span class="service-name">Comprehensive Inner Service</span>
+              <span class="service-arrow" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a class="service" href="https://pt.gov.songming.org/">
+              <span class="service-name">Protective Service</span>
+              <span class="service-arrow" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a class="service" href="https://isc.gov.songming.org/">
+              <span class="service-name">Internal Services Council</span>
+              <span class="service-arrow" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a class="service" href="https://ldc.gov.songming.org/">
+              <span class="service-name">The Luxe Defender Corporation</span>
+              <span class="service-arrow" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a class="service" href="https://inc.gov.songming.org/">
+              <span class="service-name">The Luxe Commander and Logistician Corporation</span>
+              <span class="service-arrow" aria-hidden="true"></span>
+            </a>
+          </li>
+          <li>
+            <a class="service" href="https://transport.gov.songming.org/">
+              <span class="service-name">Transport Service</span>
+              <span class="service-arrow" aria-hidden="true"></span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </main>
+</body>
+</html>
