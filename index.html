@@ -2,6 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- 在线访问首页文件名时统一跳转到目录地址；本地双击打开不跳转。 -->
+  <script>
+    (() => {
+      const url = new URL(window.location.href);
+      if ((url.protocol === "http:" || url.protocol === "https:") && /\/index(?:\.html)?$/.test(url.pathname)) {
+        url.pathname = url.pathname.replace(/index(?:\.html)?$/, "");
+        window.location.replace(url.href);
+      }
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#f8f5ef" media="(prefers-color-scheme: light)">
